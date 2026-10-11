@@ -1,0 +1,20 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "vite dev",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": { "regexp": "^$" },
+        "background": { "activeBegins": true, "beginsPattern": "VITE", "endsPattern": "Local:" }
+      }
+    },
+    { "label": "vite build", "type": "shell", "command": "npx vite build", "problemMatcher": [] },
+    { "label": "typecheck", "type": "npm", "script": "typecheck", "problemMatcher": "$tsc" },
+    { "label": "test", "type": "npm", "script": "test", "group": "test", "problemMatcher": [] },
+    { "label": "crea setup + portabile", "type": "npm", "script": "dist", "group": "build", "problemMatcher": [] }
+  ]
+}

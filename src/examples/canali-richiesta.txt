@@ -1,0 +1,64 @@
+titolo: Canali richiesta
+
+// Categorie = colori della legenda
+categoria: auto = Automatico (sistema)
+categoria: manuale = Operatore (manuale)
+categoria: fascicolo = Fascicolo
+categoria: decisione = Decisione
+categoria: canale = Canale di ingresso
+categoria: ok = Stato finale: elaborata
+categoria: ko = Stato finale: scartata
+
+[1 · Acquisizione] {blu}
+M  = MODULO\n(Solo autenticato) {canale}
+ES = EMAIL / SPORTELLO {canale}
+FA = CREAZIONE AUTOMATICA FASCICOLO ELETTRICI {fascicolo}
+FM = CREAZIONE MANUALE FASCICOLO ELETTRICI {fascicolo}
+M -> FA
+ES -> FM
+
+[2 · Istruttoria] {grigio}
+IR = INVIO CORRETTA PRESENTAZIONE RICHIESTA {auto}
+VP = VERIFICA PRELIMINARE {auto}
+VM = IMPOSTAZIONE STEP ITER 'DA VERIFICARE MANUALMENTE' {auto}
+VD = VERIFICA DOCUMENTAZIONE {manuale}
+FA -> IR -> VP
+FM -> VD
+VM -> VD
+
+[3 · Esito e gestione] {oro}
+D1  = ESITO VERIFICA {decisione}
+D2  = ESITO VERIFICA {decisione}
+D3  = ESITO VERIFICA {decisione}
+SC1 = COMUNICAZIONE DI SCARTO {auto}
+EA  = EMISSIONE AUTOMATICA EL {auto}
+VPO = IMPOSTAZIONE STEP ITER 'VERIFICA POSITIVA' {manuale}
+CE  = COMUNICAZIONE AVVENUTA EMISSIONE {auto}
+DE  = IMPOSTAZIONE STEP ITER 'DA EMETTERE MANUALMENTE' {auto}
+SC2 = COMUNICAZIONE DI SCARTO {manuale}
+EM  = EMISSIONE MANUALE EL {manuale}
+VP -> D1
+VD -> D2
+D1 -[ESITO POSITIVO]-> EA
+D1 -[ESITO NEGATIVO]-> SC1
+D1 -> DE
+D1 -[VERIFICA MANUALE\nDOCUMENTAZIONE DELEGATO]-> VM
+D2 -[ESITO POSITIVO]-> VPO
+D2 -[ESITO NEGATIVO]-> SC2
+VPO -[EMISSIONE MANUALE]-> EA
+EA -> CE
+DE -> D3
+D3 -[ESITO POSITIVO]-> EM
+D3 -[ESITO NEGATIVO]-> SC2
+
+[4 · Chiusura] {verde}
+CS1 = IMPOSTAZIONE STEP DI ITER 'RICHIESTA SCARTATA' {auto}
+CE1 = IMPOSTAZIONE STEP ITER RICHIESTA ELABORATA {auto}
+CE2 = IMPOSTAZIONE STEP ITER RICHIESTA ELABORATA {manuale}
+CS2 = IMPOSTAZIONE STEP DI ITER 'RICHIESTA SCARTATA' {manuale}
+SS  = STATO FINALE RICHIESTA SCARTATA {ko, cerchio}
+SE  = STATO FINALE RICHIESTA ELABORATA {ok, cerchio}
+SC1 -> CS1 -> SS
+CE -> CE1 -> SE
+EM -> CE2 -> SE
+SC2 -> CS2 -> SS

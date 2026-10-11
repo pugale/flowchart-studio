@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flowchart Studio</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+</head>
+<body>
+  <!-- Splash: visibile finché l'app non è pronta (rimossa da main.ts) -->
+  <div id="splash" role="status" aria-label="Avvio in corso">
+    <img src="./favicon.svg" alt="" width="96" height="96">
+    <div class="splash-title">Flowchart Studio</div>
+    <div class="splash-ver" id="splash-ver"></div>
+    <div class="splash-bar"></div>
+    <div class="splash-msg" id="splash-msg">Avvio in corso…</div>
+  </div>
+
+  <header class="toolbar">
+    <div class="brand"><img src="./favicon.svg" alt="" width="26" height="26">Flowchart Studio</div>
+
+    <div class="tb-group">
+      <div class="menu">
+        <button data-menu="file" aria-haspopup="true" aria-expanded="false" title="Nuovo diagramma, apri file">File ▾</button>
+        <div class="menu-list" role="menu" hidden>
+          <button role="menuitem" data-action="new">Nuovo diagramma</button>
+          <button role="menuitem" data-action="open">Apri… <span class="kbd">Ctrl+O</span></button>
+        </div>
+      </div>
+      <button data-action="save" title="Salva JSON (Ctrl+S)">Salva</button>
+      <button data-action="saveAs" title="Salva con nome (Ctrl+Maiusc+S)">Salva come…</button>
+      <button class="hl" data-action="openImport" title="Crea il diagramma da una descrizione scritta (Ctrl+I)">✎ Da testo</button>
+    </div>
+
+    <div class="tb-group">
+      <button data-action="undo" title="Annulla (Ctrl+Z)">↶</button>
+      <button data-action="redo" title="Ripeti (Ctrl+Y)">↷</button>
+      <button id="tb-group" data-action="group" title="Metti le forme selezionate in una corsia (Ctrl+G)">Raggruppa</button>
+      <button id="tb-delete" data-action="delete" title="Elimina selezione (Canc)">Elimina</button>
+    </div>
+
+    <div class="tb-group">
+      <div class="menu">
+        <button data-menu="export" aria-haspopup="true" aria-expanded="false" title="Esporta il diagramma">Esporta ▾</button>
+        <div class="menu-list" role="menu" hidden>
+          <button role="menuitem" data-action="pdf">PDF</button>
+          <button role="menuitem" data-action="jpg">JPG (immagine)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tb-group">
+      <button data-action="zoomOut" title="Riduci">−</button>
+      <button id="zoom-label" data-action="zoomReset" title="Zoom 100%">100%</button>
+      <button data-action="zoomIn" title="Ingrandisci">+</button>
+      <button data-action="fit" title="Adatta: mostra tutto il diagramma">Adatta</button>
+    </div>
+
+    <div class="tb-group tb-right">
+      <label class="tb-chk"><input type="checkbox" id="tb-grid"> Griglia</label>
+      <label class="tb-chk"><input type="checkbox" id="tb-legend"> Legenda</label>
+      <label class="tb-chk" title="Colore di sfondo della dashboard">Sfondo <input type="color" id="tb-bg"></label>
+    </div>
+
+    <div class="tb-group">
+      <button class="icon toggle" data-action="togglePalette" aria-pressed="true" title="Mostra / nascondi la palette (sinistra)" aria-label="Mostra o nascondi la palette">
+        <svg viewBox="0 0 20 16" width="18" height="15" aria-hidden="true"><rect x="1" y="1" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="1" width="6" height="14" rx="1.5" fill="currentColor"/></svg>
+      </button>
+      <button class="icon toggle" data-action="toggleProps" aria-pressed="true" title="Mostra / nascondi il pannello delle impostazioni (destra)" aria-label="Mostra o nascondi il pannello delle impostazioni">
+        <svg viewBox="0 0 20 16" width="18" height="15" aria-hidden="true"><rect x="1" y="1" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><rect x="13" y="1" width="6" height="14" rx="1.5" fill="currentColor"/></svg>
+      </button>
+      <button class="help" data-action="help" title="Manuale (F1)" aria-label="Apri il manuale">?</button>
+    </div>
+  </header>
+
+  <main>
+    <aside id="palette">
+      <h3>Forme</h3>
+      <div id="palette-shapes" class="palette-grid"></div>
+      <h3>Linee</h3>
+      <div id="palette-lines" class="palette-grid"></div>
+      <h3>Corsie / gruppi</h3>
+      <div id="palette-containers" class="palette-grid"></div>
+      <p class="muted small">Trascina gli elementi nella dashboard oppure fai clic per aggiungerli al centro.
+        Per collegare due forme usa i punti blu che compaiono passando sopra una forma.</p>
+    </aside>
+
+    <section id="canvas-wrap">
+      <div id="graph"></div>
+      <div class="statusbar">Trascina nel vuoto = sposta la vista · Maiusc+trascina = seleziona più forme · Punti blu = collega · Doppio clic = scrivi · Ctrl+rotella = zoom · F1 = manuale</div>
+    </section>
+
+    <aside id="props">
+      <div id="props-body"></div>
+      <div id="legend-panel"></div>
+    </aside>
+  </main>
+
+  <!-- Finestra: crea diagramma da testo -->
+  <div id="import-modal" class="modal" hidden>
+    <div class="modal-box" role="dialog" aria-labelledby="import-title">
+      <header class="modal-head">
+        <h2 id="import-title">Crea diagramma da testo</h2>
+        <button data-action="closeImport" title="Chiudi (Esc)">✕</button>
+      </header>
+      <div class="modal-body">
+        <textarea id="import-text" spellcheck="false" placeholder="Scrivi qui i passi del processo…"></textarea>
+        <aside class="import-help">
+          <h4>Come si scrive</h4>
+          <dl>
+            <dt><code>A -&gt; B -&gt; C</code></dt><dd>passi collegati in sequenza</dd>
+            <dt><code>A -[sì]-&gt; B</code></dt><dd>freccia con etichetta (sì/positivo = verde, no/negativo = rosso)</dd>
+            <dt><code>Dati completi?</code></dt><dd>con il <b>?</b> finale diventa un rombo di decisione</dd>
+            <dt><code>Inizio</code> / <code>Fine</code></dt><dd>forma di inizio/fine</dd>
+            <dt><code>[Nome corsia] {verde}</code></dt><dd>apre una corsia: i passi nuovi finiscono lì</dd>
+            <dt><code>Passo {auto, cerchio}</code></dt><dd>categoria colore e/o forma</dd>
+            <dt><code>X = Testo lungo {auto}</code></dt><dd>alias: utile per testi lunghi o ripetuti</dd>
+            <dt><code>categoria: k = Descrizione #ffe6cc</code></dt><dd>nuova voce di legenda (colori facoltativi)</dd>
+            <dt><code>titolo: Testo</code></dt><dd>banner del titolo</dd>
+            <dt><code>\n</code> · <code>//</code></dt><dd>a capo nel testo · commento</dd>
+          </dl>
+          <h4>Categorie pronte</h4>
+          <p>auto, manuale, fascicolo, decisione, canale, ok, ko, neutro</p>
+          <h4>Forme</h4>
+          <p>processo, attività, inizio, fine, rombo, cerchio, ellisse, dati, documento, database, preparazione, sottoprocesso, nota</p>
+          <h4>Colori corsia</h4>
+          <p>blu, grigio, oro, verde, viola, rosso</p>
+        </aside>
+      </div>
+      <div id="import-status" aria-live="polite"></div>
+      <footer class="modal-foot">
+        <button data-action="importTemplate">Esempio breve</button>
+        <button data-action="importExample">Esempio "Canali richiesta"</button>
+        <span class="spacer"></span>
+        <button data-action="importAdd" title="Aggiunge sotto il diagramma attuale">Aggiungi al diagramma</button>
+        <button class="primary" data-action="importReplace" title="Ctrl+Invio">Crea nuovo diagramma</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Finestra: manuale (caricato solo alla prima apertura) -->
+  <div id="help-modal" class="modal" hidden>
+    <div class="modal-box help-box" role="dialog" aria-labelledby="help-title">
+      <header class="modal-head">
+        <h2 id="help-title">Manuale</h2>
+        <div class="help-actions">
+          <button data-action="helpPrint" title="Stampa il manuale o salvalo in PDF">Stampa</button>
+          <button data-action="closeHelp" title="Chiudi (Esc)">✕</button>
+        </div>
+      </header>
+      <iframe id="help-frame" title="Manuale di Flowchart Studio"></iframe>
+    </div>
+  </div>
+
+  <input type="file" id="file-input" accept=".json,application/json" hidden>
+  <div id="toast" role="status"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

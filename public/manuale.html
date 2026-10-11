@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manuale – Flowchart Studio</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <style>
+    :root { --accent: #2f80ed; --bar: #1f2d3d; --line: #dfe3e8; --muted: #6b7280; --text: #1f2937; --soft: #f3f5f8; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font: 15px/1.6 'Segoe UI', Arial, sans-serif; color: var(--text); background: #fff; }
+    header { background: linear-gradient(160deg, #2b5d8f 0%, #1a3550 100%); color: #fff; padding: 28px 40px; display: flex; align-items: center; gap: 18px; }
+    header img { width: 64px; height: 64px; }
+    header h1 { margin: 0; font-size: 28px; font-weight: 600; }
+    header p { margin: 2px 0 0; opacity: .8; }
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; }
+    nav { width: 250px; flex-shrink: 0; position: sticky; top: 0; align-self: flex-start; max-height: 100vh; overflow-y: auto; padding: 24px 16px; border-right: 1px solid var(--line); }
+    nav h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 8px; border: none; }
+    nav ol { margin: 0; padding-left: 20px; }
+    nav li { margin: 4px 0; }
+    nav a { color: var(--text); text-decoration: none; }
+    nav a:hover { color: var(--accent); }
+    main { flex: 1; padding: 24px 40px 60px; min-width: 0; }
+    section { padding-top: 8px; margin-bottom: 28px; }
+    h2 { font-size: 22px; border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin: 24px 0 12px; }
+    h3 { font-size: 17px; margin: 20px 0 8px; }
+    table { border-collapse: collapse; width: 100%; margin: 10px 0 16px; font-size: 14px; }
+    th, td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+    th { background: var(--soft); }
+    kbd { background: var(--soft); border: 1px solid #c9ced6; border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; font: 13px Consolas, monospace; white-space: nowrap; }
+    code, pre { font-family: Consolas, 'Courier New', monospace; font-size: 13px; }
+    code { background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+    pre { background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; overflow-x: auto; line-height: 1.5; }
+    .tip, .warn { border-left: 4px solid var(--accent); background: #e8f1fd; padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 12px 0; }
+    .warn { border-color: #d79b00; background: #fff6e5; }
+    .steps li { margin: 6px 0; }
+    .ui { background: var(--bar); color: #fff; border-radius: 4px; padding: 1px 7px; font-size: 13px; white-space: nowrap; }
+    .author { display: flex; gap: 18px; align-items: center; border: 1px solid var(--line); border-radius: 10px; padding: 18px 22px; background: var(--soft); max-width: 560px; }
+    .avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--bar); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 600; flex-shrink: 0; }
+    .author p { margin: 2px 0; }
+    .author a { color: var(--accent); }
+    .top { font-size: 13px; color: var(--muted); }
+    footer { text-align: center; color: var(--muted); font-size: 13px; padding: 20px; border-top: 1px solid var(--line); }
+    @media (max-width: 800px) { nav { display: none; } main { padding: 20px; } header { padding: 20px; } }
+    @media print { nav, .top { display: none; } header { background: none; color: var(--text); } a { color: inherit; } }
+  </style>
+</head>
+<body>
+  <header id="inizio">
+    <img src="./favicon.svg" alt="">
+    <div>
+      <h1>Flowchart Studio</h1>
+      <p>Manuale d'uso · versione 1.0</p>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav aria-label="Indice">
+      <h2>Indice</h2>
+      <ol>
+        <li><a href="#introduzione">Introduzione</a></li>
+        <li><a href="#schermata">La schermata</a></li>
+        <li><a href="#forme">Inserire le forme</a></li>
+        <li><a href="#testo">Scrivere il testo</a></li>
+        <li><a href="#collegamenti">Collegare le forme</a></li>
+        <li><a href="#freccia-libera">Freccia libera</a></li>
+        <li><a href="#corsie">Corsie e gruppi</a></li>
+        <li><a href="#legenda">Legenda</a></li>
+        <li><a href="#da-testo">Diagramma da testo</a></li>
+        <li><a href="#vista">Muoversi nel diagramma</a></li>
+        <li><a href="#file">Salvare, aprire, esportare</a></li>
+        <li><a href="#scorciatoie">Mouse e tastiera</a></li>
+        <li><a href="#faq">Domande frequenti</a></li>
+        <li><a href="#autore">Autore</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <section id="introduzione">
+        <h2>1. Introduzione</h2>
+        <p>Flowchart Studio serve a disegnare <b>diagrammi di flusso</b>: processi, procedure, iter di una pratica.
+          Si possono disegnare a mano, trascinando le forme, oppure <b>descrivendo il processo a parole</b>:
+          in quel caso il diagramma si disegna da solo.</p>
+        <p>Il lavoro viene salvato automaticamente mentre disegni. Per conservarlo o condividerlo si salva in un
+          file <code>.json</code>; per inserirlo in documenti e presentazioni si esporta in <b>PDF</b> o <b>JPG</b>.</p>
+        <div class="tip">Per provare subito: premi <span class="ui">✎ Da testo</span>, poi
+          <b>Esempio "Canali richiesta"</b> e <b>Crea nuovo diagramma</b>.</div>
+      </section>
+
+      <section id="schermata">
+        <h2>2. La schermata</h2>
+        <table>
+          <tr><th>Zona</th><th>A cosa serve</th></tr>
+          <tr><td><b>Barra in alto</b></td><td>
+            <span class="ui">File ▾</span> (Nuovo diagramma, Apri) · Salva, Salva come · <span class="ui">✎ Da testo</span><br>
+            Annulla/Ripeti, Raggruppa, Elimina · <span class="ui">Esporta ▾</span> (PDF, JPG) · Zoom e <b>Adatta</b><br>
+            Griglia, Legenda, colore di Sfondo · <span class="ui">◧</span> <span class="ui">◨</span> mostrano/nascondono i pannelli laterali · <span class="ui">?</span> apre questo manuale</td></tr>
+          <tr><td><b>Palette (sinistra)</b></td><td>Forme, freccia libera e corsie da inserire nel diagramma</td></tr>
+          <tr><td><b>Dashboard (centro)</b></td><td>Il foglio di lavoro dove si disegna. Se il diagramma è più grande della finestra compaiono le <b>barre di scorrimento</b></td></tr>
+          <tr><td><b>Pannello (destra)</b></td><td>Le impostazioni dell'elemento selezionato; se non è selezionato nulla, le impostazioni del diagramma. In basso c'è sempre la sezione <b>Legenda</b>. Se è nascosto, si riapre da solo quando fai clic su una forma</td></tr>
+        </table>
+      </section>
+
+      <section id="forme">
+        <h2>3. Inserire le forme</h2>
+        <ol class="steps">
+          <li><b>Trascina</b> una forma dalla palette nella dashboard, oppure <b>fai clic</b> sulla forma per inserirla al centro.</li>
+          <li>Per <b>spostarla</b> trascinala, oppure usa i tasti freccia (con <kbd>Maiusc</kbd> si sposta di 10 punti).</li>
+          <li>Per <b>ridimensionarla</b> trascina i quadratini agli angoli, oppure scrivi larghezza e altezza nel pannello.</li>
+          <li>Per <b>selezionarne più di una</b> tieni premuto <kbd>Maiusc</kbd> e trascina un riquadro partendo da un punto vuoto,
+            oppure fai clic sulle forme tenendo premuto <kbd>Maiusc</kbd>.</li>
+        </ol>
+        <h3>Forme disponibili</h3>
+        <table>
+          <tr><th>Forma</th><th>Uso tipico</th></tr>
+          <tr><td>Processo, Attività</td><td>Un passo del processo</td></tr>
+          <tr><td>Inizio / Fine</td><td>Punto di partenza o di arrivo</td></tr>
+          <tr><td>Decisione (rombo)</td><td>Una domanda con più esiti (sì/no, positivo/negativo)</td></tr>
+          <tr><td>Stato (cerchio)</td><td>Uno stato finale, es. "richiesta elaborata"</td></tr>
+          <tr><td>Dati, Documento, Database</td><td>Informazioni in ingresso o in uscita, documenti, archivi</td></tr>
+          <tr><td>Preparazione, Sottoprocesso, Input manuale</td><td>Passi particolari dei diagrammi di flusso classici</td></tr>
+          <tr><td>Nota</td><td>Un commento</td></tr>
+          <tr><td>Titolo (banner)</td><td>Il titolo del diagramma</td></tr>
+          <tr><td>Testo libero</td><td>Una scritta senza bordo; si crea anche con un <b>doppio clic nel vuoto</b></td></tr>
+        </table>
+        <h3>Colori e aspetto</h3>
+        <p>Con la forma selezionata, nel pannello a destra puoi scegliere un <b>colore rapido</b> (sfondo e bordo
+          insieme) oppure i singoli colori, lo spessore del bordo, il tipo di forma e se includerla nella legenda.
+          Le modifiche valgono per tutte le forme selezionate.</p>
+      </section>
+
+      <section id="testo">
+        <h2>4. Scrivere il testo</h2>
+        <ul>
+          <li><b>Doppio clic</b> sulla forma (oppure <kbd>F2</kbd>) e scrivi direttamente nella forma; fai clic fuori per confermare.</li>
+          <li>Oppure scrivi nel campo <b>Testo</b> del pannello a destra: la forma si aggiorna mentre scrivi. <kbd>Invio</kbd> va a capo.</li>
+          <li>Il testo va a capo da solo quando non entra nella larghezza della forma.</li>
+        </ul>
+        <h3>Font e stile</h3>
+        <p>Nella sezione <b>Testo</b> del pannello: font, dimensione, colore, grassetto, corsivo e allineamento.</p>
+        <h3>Maiuscole e minuscole</h3>
+        <table>
+          <tr><th>Opzione</th><th>Risultato con "VERIFICA della Documentazione"</th></tr>
+          <tr><td>Come scritto</td><td>VERIFICA della Documentazione</td></tr>
+          <tr><td>TUTTO MAIUSCOLO</td><td>VERIFICA DELLA DOCUMENTAZIONE</td></tr>
+          <tr><td>tutto minuscolo</td><td>verifica della documentazione</td></tr>
+          <tr><td>Solo prima lettera maiuscola</td><td>Verifica della documentazione</td></tr>
+        </table>
+        <div class="tip">L'opzione cambia solo come il testo appare: il testo originale non si perde e torna
+          com'era scegliendo <b>Come scritto</b>.</div>
+      </section>
+
+      <section id="collegamenti">
+        <h2>5. Collegare le forme</h2>
+        <ol class="steps">
+          <li>Passa con il mouse sopra una forma: compaiono <b>4 punti blu</b> (sopra, destra, sotto, sinistra).</li>
+          <li>Tieni premuto su un punto blu e <b>trascina</b> fino all'altra forma.</li>
+          <li>Rilascia sulla forma di arrivo, vicino al punto blu dove vuoi agganciare la freccia.</li>
+        </ol>
+        <div class="tip">Se rilasci la freccia <b>nel vuoto</b>, viene creata subito una nuova forma già collegata,
+          pronta per scrivere il testo.</div>
+        <p>Il collegamento resta agganciato alle forme quando le sposti. Con il collegamento selezionato, nel pannello
+          puoi cambiare colore, spessore, stile della linea (continua, tratteggiata, puntinata), percorso
+          (a gomito, diritto, curvo), punte e <b>etichetta</b> (es. "ESITO POSITIVO"). L'etichetta si sposta
+          trascinandola; <b>Centra etichetta</b> la riporta a metà. <b>Inverti direzione</b> scambia partenza e arrivo.</p>
+      </section>
+
+      <section id="freccia-libera">
+        <h2>6. Freccia libera</h2>
+        <p>La <b>freccia libera</b> (palette, sezione <b>Linee</b>) non è agganciata a nessuna forma: serve per
+          indicazioni e annotazioni.</p>
+        <ul>
+          <li>Si sposta trascinandola o con i tasti freccia.</li>
+          <li>Si <b>allunga e si ruota</b> trascinando una delle due estremità.</li>
+          <li>Si modifica dal pannello come un collegamento.</li>
+          <li>Resta ferma quando sposti una corsia.</li>
+        </ul>
+      </section>
+
+      <section id="corsie">
+        <h2>7. Corsie e gruppi</h2>
+        <p>Le <b>corsie</b> raggruppano le forme per fase o per responsabile (es. "1 · Acquisizione").
+          Possono essere <b>orizzontali</b> o <b>verticali</b>:</p>
+        <table>
+          <tr><th>Orientamento</th><th>Aspetto</th><th>Più corsie</th></tr>
+          <tr><td><b>Orizzontale</b></td><td>Corsia larga, nome nella banda verticale a <b>sinistra</b></td><td>Si impilano dall'alto in basso</td></tr>
+          <tr><td><b>Verticale</b></td><td>Corsia alta (colonna), nome nella banda in <b>alto</b></td><td>Si affiancano da sinistra a destra</td></tr>
+        </table>
+        <ul>
+          <li>Trascina <b>Corsia orizzontale</b> o <b>Corsia verticale</b> dalla palette, oppure seleziona alcune forme e premi
+            <b>Raggruppa</b> (<kbd>Ctrl</kbd>+<kbd>G</kbd>): si crea una corsia orizzontale attorno alle forme.</li>
+          <li>Per <b>cambiare orientamento</b> seleziona la corsia e scegli <b>Orientamento</b> nel pannello: la corsia
+            ruota e le forme al suo interno vengono ridisposte di conseguenza.</li>
+          <li>Trascinando una forma dentro una corsia, la forma ne fa parte.</li>
+          <li>Per spostare la corsia trascinala dalla <b>banda colorata</b>: le forme dentro si spostano con lei.</li>
+          <li>Nel pannello: nome, colore di sfondo e della banda, mostra/nascondi la banda con il nome,
+            <b>tipo di bordo</b> (continuo, tratteggiato, puntinato, tratto-punto, nessuno), stili rapidi.</li>
+          <li><b>Separa</b> (<kbd>Ctrl</kbd>+<kbd>Maiusc</kbd>+<kbd>G</kbd>) elimina la corsia e lascia le forme;
+            <b>Elimina con contenuto</b> elimina tutto.</li>
+        </ul>
+        <div class="tip">Se una forma esce dal bordo, la corsia si <b>allarga da sola</b>: le corsie orizzontali sotto
+          scendono, quelle verticali a destra si spostano. Si può disattivare nelle impostazioni del diagramma.
+          Le corsie stanno sempre <b>sotto</b> forme e frecce.</div>
+      </section>
+
+      <section id="legenda">
+        <h2>8. Legenda</h2>
+        <p>La legenda si compila da sola: <b>ogni colore di sfondo usato diventa una voce</b>. Nella sezione
+          <b>Legenda</b> del pannello a destra scrivi la descrizione di ogni colore (es. "Automatico (sistema)").</p>
+        <ul>
+          <li>Si mostra o si nasconde con la casella <b>Legenda</b> nella barra in alto.</li>
+          <li>Si sposta trascinandola; nel pannello si cambiano titolo, larghezza, dimensione del testo e colori.</li>
+          <li>Per escludere una forma dalla legenda togli la spunta <b>Includi nella legenda</b>.</li>
+        </ul>
+      </section>
+
+      <section id="da-testo">
+        <h2>9. Diagramma da testo</h2>
+        <p>Premi <span class="ui">✎ Da testo</span> (<kbd>Ctrl</kbd>+<kbd>I</kbd>), descrivi il processo e premi <b>Crea nuovo diagramma</b>
+          (<kbd>Ctrl</kbd>+<kbd>Invio</kbd>). Forme, colori, corsie e legenda vengono creati e disposti in automatico.
+          I pulsanti <b>Esempio breve</b> ed <b>Esempio "Canali richiesta"</b> caricano due esempi pronti.</p>
+        <pre>titolo: Gestione richiesta
+categoria: auto = Automatico (sistema)
+
+[1 · Ricezione] {blu}
+Inizio -> Ricezione richiesta {manuale} -> Registrazione {auto}
+
+[2 · Verifica] {grigio}
+Registrazione -> Documenti completi?
+Documenti completi? -[sì]-> Istruttoria {manuale}
+Documenti completi? -[no]-> Richiesta integrazione {auto}</pre>
+        <table>
+          <tr><th>Scrittura</th><th>Significato</th></tr>
+          <tr><td><code>A -&gt; B -&gt; C</code></td><td>Passi collegati in sequenza</td></tr>
+          <tr><td><code>A -[sì]-&gt; B</code></td><td>Freccia con etichetta (sì/positivo verde, no/negativo rosso)</td></tr>
+          <tr><td><code>Documenti completi?</code></td><td>Con il <b>?</b> finale diventa un rombo di decisione</td></tr>
+          <tr><td><code>Inizio</code> / <code>Fine</code></td><td>Forma di inizio/fine</td></tr>
+          <tr><td><code>[Nome corsia] {verde}</code></td><td>Nuova corsia: blu, grigio, oro, verde, viola, rosso</td></tr>
+          <tr><td><code>Passo {auto, cerchio}</code></td><td>Categoria di colore e/o forma</td></tr>
+          <tr><td><code>X = Testo lungo {auto}</code></td><td>Alias, utile per testi lunghi o ripetuti</td></tr>
+          <tr><td><code>categoria: k = Descrizione #ffe6cc</code></td><td>Nuova voce di legenda (colore facoltativo)</td></tr>
+          <tr><td><code>titolo: Testo</code></td><td>Banner del titolo</td></tr>
+          <tr><td><code>\n</code> · <code>//</code></td><td>A capo nel testo · commento</td></tr>
+        </table>
+        <p><b>Categorie pronte:</b> auto, manuale, fascicolo, decisione, canale, ok, ko, neutro.<br>
+          <b>Forme:</b> processo, attività, inizio, fine, rombo, cerchio, ellisse, dati, documento, database,
+          preparazione, sottoprocesso, nota.</p>
+        <p>Mentre scrivi, in basso compaiono il numero di passi e gli eventuali errori con il numero di riga.
+          <b>Aggiungi al diagramma</b> inserisce il nuovo diagramma sotto quello esistente. Le corsie create
+          dal testo sono orizzontali; l'orientamento si può cambiare dopo.</p>
+        <div class="tip">Il risultato è una prima stesura: le forme si possono poi spostare e rifinire a mano.</div>
+      </section>
+
+      <section id="vista">
+        <h2>10. Muoversi nel diagramma</h2>
+        <table>
+          <tr><th>Per…</th><th>Fai così</th></tr>
+          <tr><td>Vedere <b>tutto il diagramma</b></td><td>Premi <b>Adatta</b>: il diagramma viene ridimensionato e centrato in modo che sia tutto visibile (al massimo al 150%)</td></tr>
+          <tr><td><b>Spostare la vista</b> ("mano")</td><td>Tieni premuto il tasto sinistro in un <b>punto vuoto</b> e trascina: il puntatore diventa una mano. In alternativa <kbd>Spazio</kbd>+trascina o il tasto centrale del mouse, anche sopra le forme</td></tr>
+          <tr><td>Scorrere</td><td>Le <b>barre di scorrimento</b> orizzontale e verticale compaiono da sole quando il diagramma esce dalla finestra; puoi usare anche la rotella (<kbd>Maiusc</kbd>+rotella per scorrere in orizzontale)</td></tr>
+          <tr><td>Ingrandire / ridurre</td><td><b>−</b> / <b>+</b> nella barra, oppure <kbd>Ctrl</kbd>+rotella. Il valore centrale riporta al 100%</td></tr>
+          <tr><td>Più spazio per disegnare</td><td><span class="ui">◧</span> nasconde la <b>palette</b>, <span class="ui">◨</span> il <b>pannello delle impostazioni</b>. La scelta viene ricordata; il pannello delle impostazioni si riapre da solo quando fai clic su una forma</td></tr>
+        </table>
+        <p><b>Griglia</b> mostra o nasconde i puntini; nelle impostazioni del diagramma puoi attivare l'aggancio alla griglia.
+          <b>Sfondo</b> cambia il colore della dashboard (anche nelle esportazioni).</p>
+        <div class="tip">Trascinare nel vuoto sposta la vista. Per <b>selezionare più forme con un riquadro</b>
+          tieni premuto <kbd>Maiusc</kbd> mentre trascini.</div>
+      </section>
+
+      <section id="file">
+        <h2>11. Salvare, aprire, esportare</h2>
+        <table>
+          <tr><th>Comando</th><th>Cosa fa</th></tr>
+          <tr><td><span class="ui">File ▾</span> → <b>Nuovo diagramma</b></td><td>Diagramma vuoto</td></tr>
+          <tr><td><span class="ui">File ▾</span> → <b>Apri…</b> (<kbd>Ctrl</kbd>+<kbd>O</kbd>)</td><td>Apre un file <code>.json</code> di Flowchart Studio</td></tr>
+          <tr><td><b>Salva</b> (<kbd>Ctrl</kbd>+<kbd>S</kbd>)</td><td>Salva il diagramma in un file <code>.json</code>. Dopo il primo salvataggio, risalva sullo stesso file</td></tr>
+          <tr><td><b>Salva come…</b></td><td>Salva con un nuovo nome</td></tr>
+          <tr><td><span class="ui">Esporta ▾</span> → <b>PDF</b></td><td>PDF nitido a qualsiasi ingrandimento. Formato pagina (adatto al diagramma, A4, A3) nelle impostazioni del diagramma</td></tr>
+          <tr><td><span class="ui">Esporta ▾</span> → <b>JPG</b></td><td>Immagine ad alta risoluzione, per documenti e presentazioni</td></tr>
+        </table>
+        <p>Il nome dei file è quello indicato nel campo <b>Nome</b> delle impostazioni del diagramma.</p>
+        <div class="tip">Il PDF viene creato in formato vettoriale. Se per qualche elemento non fosse possibile,
+          l'app crea comunque il PDF come immagine ad alta risoluzione e lo segnala con un messaggio.</div>
+        <div class="warn">Il <b>salvataggio automatico</b> conserva il lavoro su questo computer, ma non sostituisce il file:
+          per condividere il diagramma o tenerne una copia sicura usa <b>Salva</b>.</div>
+      </section>
+
+      <section id="scorciatoie">
+        <h2>12. Mouse e tastiera</h2>
+        <table>
+          <tr><th>Comando</th><th>Azione</th></tr>
+          <tr><td>Trascina in un punto vuoto</td><td>Sposta la vista (mano)</td></tr>
+          <tr><td><kbd>Maiusc</kbd>+trascina in un punto vuoto</td><td>Seleziona più forme con un riquadro</td></tr>
+          <tr><td><kbd>Spazio</kbd>+trascina · tasto centrale</td><td>Sposta la vista anche sopra le forme</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+rotella</td><td>Zoom</td></tr>
+          <tr><td>Rotella · <kbd>Maiusc</kbd>+rotella</td><td>Scorre in verticale · in orizzontale</td></tr>
+          <tr><td>Doppio clic su forma · nel vuoto</td><td>Scrivi il testo · nuovo testo libero</td></tr>
+          <tr><td><kbd>F1</kbd></td><td>Apre questo manuale</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>Apri un file</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd> / <kbd>Ctrl</kbd>+<kbd>Maiusc</kbd>+<kbd>S</kbd></td><td>Salva / salva con nome</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd></td><td>Annulla / ripeti</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd> / <kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>Copia / incolla / duplica</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>A</kbd></td><td>Seleziona tutto</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>G</kbd> / <kbd>Ctrl</kbd>+<kbd>Maiusc</kbd>+<kbd>G</kbd></td><td>Metti in corsia / separa</td></tr>
+          <tr><td><kbd>Canc</kbd></td><td>Elimina la selezione</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>I</kbd></td><td>Diagramma da testo</td></tr>
+          <tr><td><kbd>F2</kbd></td><td>Modifica il testo della forma selezionata</td></tr>
+          <tr><td>Tasti freccia (con <kbd>Maiusc</kbd> = 10 punti)</td><td>Sposta forme e frecce libere</td></tr>
+          <tr><td><kbd>Esc</kbd></td><td>Annulla la selezione · chiude menu e finestre</td></tr>
+        </table>
+      </section>
+
+      <section id="faq">
+        <h2>13. Domande frequenti</h2>
+        <h3>Non trovo la freccia per collegare due forme</h3>
+        <p>I collegamenti partono dai <b>punti blu</b> che compaiono passando sopra una forma (vedi <a href="#collegamenti">capitolo 5</a>).
+          Nella palette c'è solo la <a href="#freccia-libera">freccia libera</a>.</p>
+        <h3>Trascinando nel vuoto non compare il riquadro di selezione</h3>
+        <p>Trascinare nel vuoto sposta la vista. Per il riquadro di selezione tieni premuto <kbd>Maiusc</kbd>.</p>
+        <h3>Non vedo più una parte del diagramma</h3>
+        <p>Premi <b>Adatta</b>, oppure usa le barre di scorrimento o trascina nel vuoto per spostare la vista.</p>
+        <h3>Non vedo più la palette o il pannello a destra</h3>
+        <p>Sono stati nascosti: premi <span class="ui">◧</span> o <span class="ui">◨</span> in alto a destra.
+          Il pannello a destra si riapre anche facendo clic su una forma.</p>
+        <h3>Ho sbagliato qualcosa</h3>
+        <p><kbd>Ctrl</kbd>+<kbd>Z</kbd> annulla l'ultima operazione, anche più volte.</p>
+        <h3>La corsia è diventata più grande da sola</h3>
+        <p>Succede quando una forma esce dal bordo. Si può disattivare nelle impostazioni del diagramma
+          ("Allarga le corsie automaticamente").</p>
+        <h3>Il PDF è stato creato "come immagine"</h3>
+        <p>Il diagramma contiene un elemento che il formato vettoriale non riesce a riprodurre. Il PDF è comunque
+          completo e ad alta risoluzione; l'unica differenza è che il testo non si può selezionare.</p>
+        <h3>Non riesco ad aprire un file</h3>
+        <p>Si possono aprire solo i file <code>.json</code> salvati da Flowchart Studio.</p>
+        <h3>Ho chiuso l'app senza salvare</h3>
+        <p>Riaprendola sullo stesso computer ritrovi l'ultimo lavoro grazie al salvataggio automatico.</p>
+      </section>
+
+      <section id="autore">
+        <h2>14. Autore</h2>
+        <div class="author">
+          <div class="avatar" aria-hidden="true">AP</div>
+          <div>
+            <p><b>Alessandro Puglisi</b></p>
+            <p>Ideazione e sviluppo di Flowchart Studio</p>
+            <p>Email: <a href="mailto:alessandro.puglisi@eng.it">alessandro.puglisi@eng.it</a></p>
+          </div>
+        </div>
+        <p>Per segnalazioni, dubbi o proposte di miglioramento scrivi all'indirizzo indicato.</p>
+        <p class="top"><a href="#inizio">↑ Torna all'inizio</a></p>
+      </section>
+    </main>
+  </div>
+
+  <footer>Flowchart Studio · Manuale d'uso · © 2026 Alessandro Puglisi</footer>
+</body>
+</html>

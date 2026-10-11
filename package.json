@@ -1,0 +1,68 @@
+{
+  "name": "flowchart-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Editor di diagrammi di flusso: palette, corsie, legenda automatica, import da testo, JSON, JPG e PDF",
+  "author": "Alessandro Puglisi <alessandro.puglisi@eng.it>",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "app": "vite build && electron .",
+    "dist:setup": "npm run build && electron-builder --win nsis",
+    "dist:portable": "npm run build && electron-builder --win portable",
+    "dist": "npm run build && electron-builder --win nsis portable"
+  },
+  "devDependencies": {
+    "@maxgraph/core": "~0.25.0",
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
+    "jspdf": "^4.2.1",
+    "svg2pdf.js": "^2.8.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.3",
+    "vitest": "^4.1.11"
+  },
+  "build": {
+    "appId": "it.eng.flowchartstudio",
+    "productName": "Flowchart Studio",
+    "copyright": "Copyright © 2026 Alessandro Puglisi",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "build/icon.png",
+      "package.json"
+    ],
+    "asar": true,
+    "compression": "maximum",
+    "win": {
+      "icon": "build/icon.ico",
+      "target": ["nsis", "portable"]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Flowchart Studio",
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "FlowchartStudio-${version}-setup.${ext}"
+    },
+    "portable": {
+      "artifactName": "FlowchartStudio-${version}-portable.${ext}"
+    }
+  }
+}
