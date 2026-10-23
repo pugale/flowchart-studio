@@ -29,7 +29,7 @@ Autore: **Alessandro Puglisi** – alessandro.puglisi@eng.it
 | **?** | manuale (F1) |
 
 ## Requisiti
-- **Node.js 24 LTS** (file `.nvmrc`)
+- **Node.js 26.12.1** (versione indicata nel file `.nvmrc`)
 - Visual Studio Code
 - Windows per creare setup e portabile
 
@@ -40,7 +40,7 @@ Autore: **Alessandro Puglisi** – alessandro.puglisi@eng.it
 4. Terminale → Nuovo terminale:
 ```
 npm install
-npm test             # 27 test superati
+npm test             # 40 test superati
 npm run dev          # versione web: http://localhost:5173
 npm run app          # versione desktop in finestra Electron
 ```
@@ -54,7 +54,7 @@ In VS Code puoi anche premere **F5** → "Web: debug in Edge" oppure "Desktop: E
 | `install-scripts … electron-winstaller, core-js` | Nulla: non servono (usiamo NSIS e portable) |
 | Electron non installato correttamente con `npm run app` | `npm install-scripts approve electron` e poi `npm install` |
 | `npm.ps1 cannot be loaded… execution policy` | `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`, oppure usa il terminale **Command Prompt** |
-| `Unsupported engine` | Installa Node.js 24 LTS |
+| `Unsupported engine` | Installa Node.js 26.12.1 o una versione successiva |
 | `No matching version for @maxgraph/core@~0.25.0` | In `package.json` usa `~0.24.0` e rilancia `npm install` |
 
 ## Comandi
