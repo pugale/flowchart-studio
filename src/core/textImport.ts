@@ -54,6 +54,13 @@ function splitToken(token: string) {
 
 export function parseFlowText(text: string): ParsedFlow {
   const res: ParsedFlow = { title: '', categories: {}, catOrder: [], lanes: [], nodes: [], edges: [], errors: [] };
+  const lines = String(text ?? '').split(/\r?\n/);
+  const aliasLines = new Map<string, number>();
+  lines.forEach((raw, i) => {
+    const line = raw.replace(/(^|\s)\/\/.*$/, '').trim();
+    const match = line.split(ARROW).length === 1 ? line.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/) : null;
+    if (match && !aliasLines.has(match[1].toLowerCase())) aliasLines.set(match[1].toLowerCase(), i + 1);
+  });
   const byKey = new Map<string, PNode>();
   const byAlias = new Map<string, PNode>();
   const edgeKeys = new Set<string>();
@@ -68,12 +75,16 @@ export function parseFlowText(text: string): ParsedFlow {
   const ensure = (token: string, ln: number): PNode | null => {
     const { name, attrs } = splitToken(token);
     if (!name) { res.errors.push(`Riga ${ln}: manca il nome di un passo`); return null; }
+    const aliasLine = /^[A-Za-z_]\w*$/.test(name) ? aliasLines.get(name.toLowerCase()) : undefined;
+    if (!byAlias.has(name.toLowerCase()) && aliasLine !== undefined && aliasLine > ln) {
+      res.errors.push(`Riga ${ln}: l'alias "${name}" deve essere definito prima dell'uso (riga ${aliasLine})`);
+    }
     const node = byAlias.get(name.toLowerCase()) ?? byKey.get(norm(name)) ?? create(name);
     for (const a of attrs) node.attrs.push({ a, ln });
     return node;
   };
 
-  String(text ?? '').split(/\r?\n/).forEach((raw, i) => {
+  lines.forEach((raw, i) => {
     const ln = i + 1;
     const line = raw.replace(/(^|\s)\/\/.*$/, '').trim();
     if (!line) return;

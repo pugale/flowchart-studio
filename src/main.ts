@@ -10,6 +10,7 @@ import { FileOps } from './ui/files';
 import { ImportDialog } from './ui/importDialog';
 import { buildPalette } from './ui/palette';
 import { PropertiesPanel, syncToolbar } from './ui/properties';
+import { SummaryDialog } from './ui/summaryDialog';
 
 /* ---------- Splash ---------- */
 const splash = document.getElementById('splash');
@@ -34,6 +35,7 @@ const props = new PropertiesPanel(ed);
 const afterLoad = () => { syncToolbar(ed); props.refresh(true); ed.fit(); };
 const files = new FileOps(ed, afterLoad);
 const importer = new ImportDialog(ed, afterLoad);
+const summary = new SummaryDialog(ed);
 buildPalette(ed);
 
 /* ---------- Menu a tendina (File, Esporta) ---------- */
@@ -148,6 +150,9 @@ const actions: Record<string, (el: HTMLElement) => unknown> = {
   open: () => files.open(),
   save: () => files.save(false),
   saveAs: () => files.save(true),
+  summary: () => summary.open(),
+  closeSummary: () => summary.close(),
+  copySummary: () => summary.copy(),
   openImport: () => importer.open(),
   closeImport: () => importer.close(),
   importReplace: () => importer.run('replace'),
@@ -204,6 +209,7 @@ const isTyping = () => {
 };
 
 document.addEventListener('keydown', ev => {
+  if (summary.isOpen) { if (ev.key === 'Escape') summary.close(); return; }
   if (help.isOpen) {
     if (ev.key === 'Escape' || ev.key === 'F1') { ev.preventDefault(); help.close(); }
     return;

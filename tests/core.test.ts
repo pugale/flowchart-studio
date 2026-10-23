@@ -8,6 +8,8 @@ import {
   setArrows, setDash, setLaneDir, setRouting, swapEnds, textCaseOf, toHex
 } from '../src/core/styles';
 import { TEMPLATE_TEXT, buildFlowDoc, parseFlowText } from '../src/core/textImport';
+import { buildDiagramSummary } from '../src/core/summaryText';
+import { LANE_PRESETS, NODE_DEFS, PRESETS } from '../src/core/styles';
 import type { FlowDoc, Rect } from '../src/core/types';
 import { backgroundFirst } from '../src/core/zorder';
 import exampleJson from '../src/examples/canali-richiesta.json?raw';
@@ -49,8 +51,90 @@ describe('import da testo', () => {
   });
 
   it('colori delle frecce dalle etichette', () => {
-    const { doc } = buildFlowDoc(parseFlowText('A? -[sì]-> B\nA? -[no]-> C\nB -> C'));
-    expect(doc.edges.map(e => e.style.strokeColor)).toEqual(['#2e7d32', '#c0392b', '#5b6573']);
+    const { doc } = buildFlowDoc(parseFlowText('A? -[sì]-> B\nA? -[no]-> C\nA? -[positivo]-> D\nA? -[negativo]-> E'));
+    expect(doc.edges.map(e => e.style.strokeColor)).toEqual(['#2e7d32', '#c0392b', '#2e7d32', '#c0392b']);
+  });
+
+  it('collega le sequenze e conserva i nodi ripetuti', () => {
+    const p = parseFlowText('A -> B -> C\nA -> B');
+    expect([p.nodes.map(n => n.text), p.edges.map(e => [e.from.text, e.to.text])]).toEqual([
+      ['A', 'B', 'C'], [['A', 'B'], ['B', 'C']]
+    ]);
+  });
+
+  it('riconosce decisioni, inizi e fini impliciti', () => {
+    const { doc } = buildFlowDoc(parseFlowText('Dati completi? -> Inizio -> Fine'));
+    expect(doc.nodes.filter(n => n.type !== 'title').map(n => n.type)).toEqual(['decision', 'terminator', 'terminator']);
+  });
+
+  it('crea il banner del titolo', () => {
+    const { doc } = buildFlowDoc(parseFlowText('titolo: Gestione richieste\nPasso'));
+    expect(doc.nodes[0]).toMatchObject({ type: 'title', text: 'GESTIONE RICHIESTE' });
+  });
+
+  it('riconosce tutte le forme documentate', () => {
+    const shapes = [
+      ['processo', 'process'], ['attività', 'rounded'], ['inizio', 'terminator'], ['fine', 'terminator'],
+      ['rombo', 'decision'], ['cerchio', 'circle'], ['ellisse', 'ellipse'], ['dati', 'data'],
+      ['documento', 'document'], ['database', 'database'], ['preparazione', 'preparation'],
+      ['sottoprocesso', 'subprocess'], ['nota', 'note']
+    ] as const;
+    const text = shapes.map(([shape], i) => `Passo ${i + 1} {${shape}}`).join('\n');
+    const { doc, errors } = buildFlowDoc(parseFlowText(text));
+    expect(errors).toEqual([]);
+    expect(doc.nodes.map(n => n.type)).toEqual(shapes.map(([, type]) => type));
+    expect(shapes.every(([, type]) => type in NODE_DEFS)).toBe(true);
+  });
+
+  it('applica le categorie predefinite e la legenda personalizzata', () => {
+    const categories = ['auto', 'manuale', 'fascicolo', 'decisione', 'canale', 'ok', 'ko', 'neutro'];
+    const { doc: builtins } = buildFlowDoc(parseFlowText(categories.map((category, i) => `Passo ${i + 1} {${category}}`).join('\n')));
+    expect(builtins.nodes.map(n => n.style.fillColor)).toEqual(PRESETS.slice(0, 8).map(c => c.fill));
+    const { doc, errors } = buildFlowDoc(parseFlowText(
+      'categoria: personalizzata = Voce personalizzata #ffe6cc #123456\nAltro {personalizzata}'
+    ));
+    expect(errors).toEqual([]);
+    expect(doc.nodes[0]?.style).toMatchObject({ fillColor: '#ffe6cc', strokeColor: '#123456' });
+    expect(doc.legend.descriptions['#ffe6cc']).toBe('Voce personalizzata');
+    const { doc: noColor } = buildFlowDoc(parseFlowText('categoria: senza = Voce senza colore\nPasso {senza}'));
+    expect(Object.values(noColor.legend.descriptions)).toContain('Voce senza colore');
+  });
+
+  it('applica tutti i colori delle corsie e contiene i passi nella corsia corretta', () => {
+    const text = LANE_PRESETS.map(lane => `[${lane.name}] {${lane.name.toLowerCase()}}\nPasso ${lane.name}`).join('\n');
+    const { doc, errors } = buildFlowDoc(parseFlowText(text));
+    expect(errors).toEqual([]);
+    expect(doc.lanes.map(lane => lane.style.fillColor)).toEqual(LANE_PRESETS.map(lane => lane.header));
+    expect(doc.nodes.map(node => node.parent)).toEqual(doc.lanes.map(lane => lane.id));
+  });
+
+  it('riutilizza le etichette uguali e permette forme distinte tramite alias', () => {
+    const p = parseFlowText('X = Passo\nY = Passo\nX -> Y\nPrimo -> Secondo\nprimo -> Secondo');
+    expect(p.nodes.map(n => n.text)).toEqual(['Passo', 'Passo', 'Primo', 'Secondo']);
+    expect(p.edges).toHaveLength(2);
+    expect(p.edges[0]?.from).not.toBe(p.edges[0]?.to);
+  });
+
+  it('segnala gli alias usati prima della dichiarazione e accetta quelli dichiarati prima', () => {
+    const forward = parseFlowText('X -> B\nX = Passo\nB = Fine');
+    expect(forward.errors).toEqual([
+      'Riga 1: l\'alias "X" deve essere definito prima dell\'uso (riga 2)',
+      'Riga 1: l\'alias "B" deve essere definito prima dell\'uso (riga 3)'
+    ]);
+    const declared = parseFlowText('X = Passo\nX -> Fine');
+    expect(declared.errors).toEqual([]);
+    expect(declared.edges.map(edge => [edge.from.text, edge.to.text])).toEqual([['Passo', 'Fine']]);
+  });
+
+  it('rifiuta alias duplicati senza distinzione tra maiuscole e minuscole', () => {
+    const p = parseFlowText('X = Primo\nx = Secondo');
+    expect(p.errors).toEqual(['Riga 2: l\'alias "x" è già stato usato']);
+  });
+
+  it('applica i commenti solo a inizio riga o dopo uno spazio e converte i ritorni a capo', () => {
+    const p = parseFlowText('// riga ignorata\nA\\nB -> C // commento\nD//testo');
+    expect(p.nodes.map(n => n.text)).toEqual(['A\nB', 'C', 'D//testo']);
+    expect(p.edges).toHaveLength(1);
   });
 
   it('segnala gli errori con il numero di riga', () => {
@@ -65,6 +149,38 @@ describe('import da testo', () => {
   it('i cicli non bloccano l\'impaginazione', () => {
     const { doc } = buildFlowDoc(parseFlowText('A -> B -> C -> A'));
     expect(doc.nodes).toHaveLength(3);
+  });
+});
+
+describe('testo riepilogativo', () => {
+  it('riassume titolo, aree, passi e diramazioni mantenendo le etichette', () => {
+    const { doc } = buildFlowDoc(parseFlowText(
+      'titolo: Processo richiesta\n[Ingresso] {blu}\nRicezione -> Verifica?\n[Esito] {verde}\nVerifica? -[sì]-> Approvazione\nVerifica? -[no]-> Rifiuto'
+    ));
+    const summary = buildDiagramSummary(doc);
+    expect(summary).toContain('PROCESSO RICHIESTA');
+    expect(summary).toContain('Il diagramma descrive un processo con 4 passi e 3 collegamenti.');
+    expect(summary).toContain('Area: Ingresso');
+    expect(summary).toContain('Area: Esito');
+    expect(summary).toContain('Verifica?');
+    expect(summary).toContain('etichetta: sì');
+    expect(summary).toContain('etichetta: no');
+    expect(summary).toContain('Approvazione');
+    expect(summary).toContain('Rifiuto');
+  });
+
+  it('indica i passi isolati e le frecce libere senza fingere collegamenti', () => {
+    const { doc } = buildFlowDoc(parseFlowText('A -> B\nIsolato'));
+    doc.edges.push({ id: 'free', source: null, target: null, label: 'nota', style: {} });
+    const summary = buildDiagramSummary(doc);
+    expect(summary).toContain('Isolato: non risulta collegato ad altri passi.');
+    expect(summary).toContain('1 freccia libera o non collegata');
+    expect(summary).toContain('1 collegamento.');
+  });
+
+  it('se il diagramma è vuoto restituisce un messaggio chiaro', () => {
+    const { doc } = buildFlowDoc(parseFlowText('titolo: Vuoto'));
+    expect(buildDiagramSummary(doc)).toBe('VUOTO\n\nIl diagramma è vuoto.');
   });
 });
 

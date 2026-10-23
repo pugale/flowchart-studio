@@ -115,9 +115,17 @@ h4 { margin: 14px 0 6px; font-size: 12px; color: var(--muted); text-transform: u
 .import-help p { margin: 0; color: var(--muted); line-height: 1.5; }
 #import-status { padding: 8px 16px; border-top: 1px solid var(--line); font-size: 12px; max-height: 110px; overflow-y: auto; }
 #import-status .ok { color: #2e7d32; }
+#import-status .invalid { color: #b42318; font-weight: 600; }
+#import-status .summary { color: var(--muted); margin-top: 2px; }
 #import-status .warn { color: #b45309; }
+#import-status .import-error { display: block; padding: 2px 0; border: 0; background: transparent; color: #b45309; text-align: left; cursor: pointer; font: inherit; }
+#import-status .import-error:hover { text-decoration: underline; }
 .modal-foot { display: flex; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--line); background: #f8fafc; }
 .modal-foot .spacer { flex: 1; }
+.summary-box { width: min(820px, 94vw); height: min(680px, 88vh); }
+.summary-hint { margin: 12px 16px 6px; color: var(--muted); font-size: 13px; }
+#summary-text { flex: 1; min-height: 0; margin: 0 16px 14px; padding: 12px; resize: none; border: 1px solid var(--line); border-radius: 6px; font: 13px/1.55 'Segoe UI', Arial, sans-serif; }
+#summary-text:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
 .help-box { width: min(1200px, 96vw); height: 92vh; }
 .help-actions { display: flex; gap: 6px; }
 #help-frame { flex: 1; width: 100%; border: none; background: #fff; }

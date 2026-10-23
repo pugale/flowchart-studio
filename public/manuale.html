@@ -93,7 +93,7 @@
         <table>
           <tr><th>Zona</th><th>A cosa serve</th></tr>
           <tr><td><b>Barra in alto</b></td><td>
-            <span class="ui">File ▾</span> (Nuovo diagramma, Apri) · Salva, Salva come · <span class="ui">✎ Da testo</span><br>
+            <span class="ui">File ▾</span> (Nuovo diagramma, Apri, Salva, Salva come, testo riepilogativo) · <span class="ui">✎ Da testo</span><br>
             Annulla/Ripeti, Raggruppa, Elimina · <span class="ui">Esporta ▾</span> (PDF, JPG) · Zoom e <b>Adatta</b><br>
             Griglia, Legenda, colore di Sfondo · <span class="ui">◧</span> <span class="ui">◨</span> mostrano/nascondono i pannelli laterali · <span class="ui">?</span> apre questo manuale</td></tr>
           <tr><td><b>Palette (sinistra)</b></td><td>Forme, freccia libera e corsie da inserire nel diagramma</td></tr>
@@ -238,15 +238,20 @@ Documenti completi? -[no]-> Richiesta integrazione {auto}</pre>
           <tr><td><code>Inizio</code> / <code>Fine</code></td><td>Forma di inizio/fine</td></tr>
           <tr><td><code>[Nome corsia] {verde}</code></td><td>Nuova corsia: blu, grigio, oro, verde, viola, rosso</td></tr>
           <tr><td><code>Passo {auto, cerchio}</code></td><td>Categoria di colore e/o forma</td></tr>
-          <tr><td><code>X = Testo lungo {auto}</code></td><td>Alias, utile per testi lunghi o ripetuti</td></tr>
+          <tr><td><code>X = Testo lungo {auto}</code></td><td>Alias, utile per testi lunghi o ripetuti. Va dichiarato prima del primo uso; per passi distinti con lo stesso testo, usa alias diversi.</td></tr>
           <tr><td><code>categoria: k = Descrizione #ffe6cc</code></td><td>Nuova voce di legenda (colore facoltativo)</td></tr>
           <tr><td><code>titolo: Testo</code></td><td>Banner del titolo</td></tr>
-          <tr><td><code>\n</code> · <code>//</code></td><td>A capo nel testo · commento</td></tr>
+          <tr><td><code>\n</code> · <code>//</code></td><td>A capo nel testo · commento a inizio riga o dopo uno spazio</td></tr>
         </table>
         <p><b>Categorie pronte:</b> auto, manuale, fascicolo, decisione, canale, ok, ko, neutro.<br>
           <b>Forme:</b> processo, attività, inizio, fine, rombo, cerchio, ellisse, dati, documento, database,
-          preparazione, sottoprocesso, nota.</p>
+          preparazione, sottoprocesso, nota.<br>
+          <b>Colori corsia:</b> blu, grigio, oro, verde, viola, rosso.</p>
         <p>Mentre scrivi, in basso compaiono il numero di passi e gli eventuali errori con il numero di riga.
+          Se ci sono errori, la creazione è disabilitata: seleziona un messaggio per evidenziare la riga da correggere.
+          I passi con lo stesso testo (ignorando maiuscole e spazi ripetuti) fanno riferimento allo stesso nodo.
+          Gli alias non distinguono maiuscole e minuscole; un alias usato prima della sua definizione viene segnalato come errore.
+          Un commento inizia con <code>//</code> a inizio riga o dopo uno spazio; <code>Passo//testo</code> resta testo letterale.
           <b>Aggiungi al diagramma</b> inserisce il nuovo diagramma sotto quello esistente. Le corsie create
           dal testo sono orizzontali; l'orientamento si può cambiare dopo.</p>
         <div class="tip">Il risultato è una prima stesura: le forme si possono poi spostare e rifinire a mano.</div>
@@ -274,11 +279,13 @@ Documenti completi? -[no]-> Richiesta integrazione {auto}</pre>
           <tr><th>Comando</th><th>Cosa fa</th></tr>
           <tr><td><span class="ui">File ▾</span> → <b>Nuovo diagramma</b></td><td>Diagramma vuoto</td></tr>
           <tr><td><span class="ui">File ▾</span> → <b>Apri…</b> (<kbd>Ctrl</kbd>+<kbd>O</kbd>)</td><td>Apre un file <code>.json</code> di Flowchart Studio</td></tr>
-          <tr><td><b>Salva</b> (<kbd>Ctrl</kbd>+<kbd>S</kbd>)</td><td>Salva il diagramma in un file <code>.json</code>. Dopo il primo salvataggio, risalva sullo stesso file</td></tr>
-          <tr><td><b>Salva come…</b></td><td>Salva con un nuovo nome</td></tr>
+          <tr><td><span class="ui">File ▾</span> → <b>Salva</b> (<kbd>Ctrl</kbd>+<kbd>S</kbd>)</td><td>Salva il diagramma in un file <code>.json</code>. Dopo il primo salvataggio, risalva sullo stesso file</td></tr>
+          <tr><td><span class="ui">File ▾</span> → <b>Salva con nome…</b> (<kbd>Ctrl</kbd>+<kbd>Maiusc</kbd>+<kbd>S</kbd>)</td><td>Salva con un nuovo nome</td></tr>
+          <tr><td><span class="ui">File ▾</span> → <b>Crea testo riepilogativo…</b></td><td>Genera una descrizione modificabile basata su passi, aree e collegamenti, pronta da copiare in un documento che accompagna il diagramma</td></tr>
           <tr><td><span class="ui">Esporta ▾</span> → <b>PDF</b></td><td>PDF nitido a qualsiasi ingrandimento. Formato pagina (adatto al diagramma, A4, A3) nelle impostazioni del diagramma</td></tr>
           <tr><td><span class="ui">Esporta ▾</span> → <b>JPG</b></td><td>Immagine ad alta risoluzione, per documenti e presentazioni</td></tr>
         </table>
+        <p>Il testo riepilogativo viene generato localmente dal diagramma, senza servizi esterni. Rappresenta passi e collegamenti in forma leggibile; puoi modificarlo nella finestra prima di copiarlo.</p>
         <p>Il nome dei file è quello indicato nel campo <b>Nome</b> delle impostazioni del diagramma.</p>
         <div class="tip">Il PDF viene creato in formato vettoriale. Se per qualche elemento non fosse possibile,
           l'app crea comunque il PDF come immagine ad alta risoluzione e lo segnala con un messaggio.</div>
